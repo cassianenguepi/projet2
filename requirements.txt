@@ -1,0 +1,7 @@
+# Dépendances du projet. Installation : pip install -r requirements.txt
+pandas
+scikit-learn
+matplotlib
+numpy
+pytest
+coverage
