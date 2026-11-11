@@ -145,3 +145,24 @@ class JeuDeDonnees:
             f"JeuDeDonnees : {len(self._df)} lignes, "
             f"{len(self._variables)} variables"
         )
+
+def separer_caracteristiques_cible(
+    df: pd.DataFrame
+) -> tuple[pd.DataFrame, pd.Series]:
+    """
+    Sépare les caractéristiques de la variable cible.
+    Reçoit : un DataFrame nettoyé.
+    Renvoie :
+        X : les caractéristiques des clients.
+        y : les réponses attendues (yes/no).
+    Échoue : DonneeInvalideError si la colonne 'y' est absente.
+    """
+    if "y" not in df.columns:
+        raise DonneeInvalideError(
+            "La colonne cible 'y' est absente."
+        )
+
+    X = df.drop(columns=["y"])
+    y = df["y"]
+
+    return X, y

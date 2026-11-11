@@ -29,7 +29,7 @@ def separer_donnees(X, y):
     """
         Sépare les données en ensembles d'entrainement et de test
         X : caractéristiques du client
-        Y : variable cible (yes or no)
+        y : variable cible (yes or no)
     """
 
     # Fonction qui retourne 4 résultats : 80 % données de X et y dans train, et 20% dans test
@@ -37,7 +37,7 @@ def separer_donnees(X, y):
         X, 
         y, 
         test_size=0.2, # quantité de données réservées (20% des observations) pour le test
-        random_state=42, # "fige le hazard" --> prrend un 80% fixe des données sur lequel il s'entrainera
+        random_state=42, # "permet de reproduire la même séparation des données chaque fois qu'on execute la fonction
         stratify=y # permet de conserver les mêmes proportions de "yes" et "no" dans l'entrainement et le test
     )
     return X_train, X_test, y_train, y_test
@@ -49,7 +49,7 @@ def creer_reference(X_train, y_train):
         y_train : réponses attendues pour l'entrainement
     """
     reference = DummyClassifier(strategy="most_frequent") # strategy : indique que DummyClassifier va prédire la catégorie la plus fréquente
-    reference.fit(X_train, y_train) # .fit() : apprend quelle catégorie est majoritaire (ici, c'est no)
+    reference.fit(X_train, y_train) # .fit() : apprend quelle catégorie est majoritaire
     return reference
 
 def entrainer_modele(X_train, y_train):
@@ -58,7 +58,6 @@ def entrainer_modele(X_train, y_train):
         X_train : caractéristiques d'entrainement
         y_train : réponses attendues pour l'entrainement
     """
-    modele = DecisionTreeClassifier(random_state=42) # création du modele
     # Création d'une Pipeline (regrouper les transformations et le modèle)
     # Utilisation de ColumnTransformer et de OneHotEncoder pour transformer les catégories textuelles en colonnes numériques
     # DecisionTreeClassifier cherche les divisions de données qui sont plus souvent associés à un yes ou no pour faire une prédiction
@@ -90,14 +89,14 @@ def evaluer_modele(modele, reference, X_test, y_test):
     """
     # Évaluation du modele principal
     y_pred = modele.predict(X_test) # y prédit à partir de données de clients jamais rencontrés lors de l'entrainement
-    precision = accuracy_score(y_test, y_pred) # comparaison et calcul taux de bonnes prédictions
+    exactitude = accuracy_score(y_test, y_pred) # comparaison et calcul taux d'exactitude (accuracy)
    # Évaluation du modèle de référence
     y_pred_reference = reference.predict(X_test)
-    precision_reference = accuracy_score(y_test, y_pred_reference)
+    exactitude_reference = accuracy_score(y_test, y_pred_reference)
     # Vérification avec Numpy
-    precision_numpy = np.mean(np.array(y_test) == np.array(y_pred)) # comparaison donne des booléens (True = 1, False = 0) et fait leur moyenne
+    exactitude_numpy = np.mean(np.array(y_test) == np.array(y_pred)) # comparaison donne des booléens (True = 1, False = 0) et fait leur moyenne
 
-    return precision, precision_reference, precision_numpy
+    return exactitude, exactitude_reference, exactitude_numpy
 
 def sauvegarder_modele(modele, chemin):
     """ 
@@ -108,4 +107,50 @@ def sauvegarder_modele(modele, chemin):
     dossier = os.path.dirname(chemin)
     if dossier and not os.path.exists(dossier):
         raise FileNotFoundError("Le dossier de destination n'existe pas.")
-    joblib.dump(modele, chemin) # sauvegarde le modele entrainé
+    joblib.dump(modele, chemin) # sauvegarde le modele entrainé (apprentissage)
+
+def charger_modele(chemin):
+    """ Récupère le modèle sauvegarder"""
+    if not os.path.exists(chemin):
+        raise FileNotFoundError("Le fichier du modèle est introuvable.")
+    modele = joblib.load(chemin)
+    return modele
+
+def sauvegarder_metadonnees(chemin, exactitude, colonnes):
+    """ Sauvegarde les métadonnées du modele dans un fichier JSON """
+    dossier = os.path.dirname(chemin)
+    if dossier and not os.path.exists(dossier):
+        raise FileNotFoundError("Le dossier de destination n'existe pas.")
+
+    metadonnees = {
+        "nom_modele": "Arbre de décision",
+        "exactitude" : exactitude, 
+        "colonnes" : colonnes
+    }
+    with open(chemin, "w", encoding="utf-8") as fichier:
+        json.dump(metadonnees, fichier, indent=4)
+
+def charger_metadonnees(chemin):
+    """ Charge les métadonnees depuis un fichier JSON"""
+    if not os.path.exists(chemin):
+        raise FileNotFoundError("Le fichier des métadonnées est introuvable.")
+    with open(chemin, "r", encoding="utf-8") as fichier:
+        metadonnees = json.load(fichier) # dictionnaire 
+
+    return metadonnees
+
+def predire(modele, nouvelles_donnees):
+    """
+    Prédit la souscription d'un client et retourne
+    la probabilité associée à la prédiction.
+
+    Paramètres :
+        modele : modèle de classification entraîné.
+        nouvelles_donnees : caractéristiques du nouveau client.
+    """
+    prediction = modele.predict(nouvelles_donnees)[0] # modele entrainé utilise les caractéristique du nouveau client pour faire une prédiction, [0] retire liste
+    probabilites = modele.predict_proba(nouvelles_donnees)[0]
+    classes = modele.classes_ # associé au yes, no --> liste triée ne ordre alphabétique ["no", "yes"]
+    indice = list(classes).index(prediction) # récupérer la prédictiom
+    probabilite = probabilites[indice]
+    return prediction, probabilite # retourn yes or no et probabilite associée à la catégorie prédite
