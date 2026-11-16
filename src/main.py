@@ -26,7 +26,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-=======
+
 from src.interface import Application
 
 if __name__ == "__main__":
