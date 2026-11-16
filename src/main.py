@@ -5,6 +5,7 @@ Rôle : démarrer l'application.
 Contenu : crée l'Application et la lance. Aucune logique ici.
 Lancement : python -m src.main (depuis la racine du projet)
 """
+<<<<<<< HEAD
 from src.donnees import CHEMIN_CSV,JeuDeDonnees,charger_donnees,nettoyer
 from src.interface import Application
 from src.model import Modele 
@@ -25,3 +26,10 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+=======
+from src.interface import Application
+
+if __name__ == "__main__":
+    application = Application()
+    application.lancer()
+>>>>>>> a6534c59ab9c5e9c78adb8f59c02f1f64503b570
