@@ -17,6 +17,13 @@ import json
 import os
 import joblib
 
+from src.donnees import (
+    CHEMIN_CSV,
+    charger_donnees,
+    nettoyer,
+    separer_caracteristiques_cible
+)
+
 from sklearn.model_selection import train_test_split
 from sklearn.dummy import DummyClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -154,3 +161,30 @@ def predire(modele, nouvelles_donnees):
     indice = list(classes).index(prediction) # récupérer la prédictiom
     probabilite = probabilites[indice]
     return prediction, probabilite # retourn yes or no et probabilite associée à la catégorie prédite
+
+def preparer_modele():
+    """Entraîne, évalue et sauvegarde le modèle."""
+
+    df = charger_donnees(CHEMIN_CSV)
+    df = nettoyer(df)
+
+    X, y = separer_caracteristiques_cible(df)
+
+    X_train, X_test, y_train, y_test = separer_donnees(X, y)
+
+    reference = creer_reference(X_train, y_train)
+    modele = entrainer_modele(X_train, y_train)
+
+    exactitude, exactitude_reference, exactitude_numpy = evaluer_modele(
+        modele, reference, X_test, y_test
+    )
+    sauvegarder_modele(
+        modele,
+        os.path.join("models", "modele.pkl")
+    )
+    sauvegarder_metadonnees(
+        os.path.join("models", "metadonnees.json"),
+        exactitude,
+        list(X.columns)
+    )
+    return exactitude, exactitude_reference, exactitude_numpy
