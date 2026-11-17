@@ -100,6 +100,11 @@ class VariableCategorielle(Variable):
     def __init__(self, nom: str, valeurs: list[str]):
         super().__init__(nom)
         self._valeurs = valeurs
+        
+    @property
+    def valeurs(self) -> list[str]:
+        """Renvoie les valeurs permises pour cette variable."""
+        return self._valeurs
 
     def valider(self, saisie: str) -> str:
         """Vérifie que la saisie fait partie des valeurs permises.
