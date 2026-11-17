@@ -32,4 +32,4 @@ from src.interface import Application
 if __name__ == "__main__":
     application = Application()
     application.lancer()
->>>>>>> a6534c59ab9c5e9c78adb8f59c02f1f64503b570
+
