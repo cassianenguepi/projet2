@@ -195,37 +195,36 @@ class Application:
         """Valide les champs et effectue une prédiction."""
 
         nouvelles_donnees = {}
-
         try:
             for variable in self.variables:
-
                 saisie = self.champs[variable.nom].get()
-
                 valeur = variable.valider(saisie)
-
                 nouvelles_donnees[variable.nom] = valeur
 
             # Création d'un DataFrame contenant un seul client.
             donnees_client = pd.DataFrame([nouvelles_donnees])
 
-            prediction, probabilite = predire(
+            prediction, probabilite_no, probabilite_yes = predire(
                 self.modele,
                 donnees_client
             )
 
-            pourcentage = probabilite * 100
+            pourcentage_no = probabilite_no * 100
+            pourcentage_yes = probabilite_yes * 100
 
             self.resultat.config(
                 text=(
                     f"Résultat : {prediction.upper()}\n"
-                    f"Probabilité associée : {pourcentage:.2f} %"
-                )
+                    f"Probabilité NO : {pourcentage_no:.2f} %\n"
+                    f"Probabilité YES : {pourcentage_yes:.2f} %"
             )
+        )
 
             self.enregistrer_prediction(
                 nouvelles_donnees,
                 prediction,
-                probabilite
+                probabilite_no, 
+                probabilite_yes
             )
 
             self.mettre_a_jour_graphique(prediction)
@@ -246,9 +245,10 @@ class Application:
         self,
         donnees_client,
         prediction,
-        probabilite
+        probabilite_no, 
+        probabilite_yes
     ):
-        """Ajoute une prédiction à l'historique CSV."""
+        """Ajoute une prédiction et ses probabilités à l'historique CSV."""
 
         dossier = os.path.dirname(CHEMIN_HISTORIQUE)
 
@@ -266,7 +266,7 @@ class Application:
 
             colonnes = (
                 list(donnees_client.keys())
-                + ["prediction", "probabilite"]
+                + ["prediction", "probabilite_no", "probabilite_yes"]
             )
 
             ecrivain = csv.DictWriter(
@@ -279,7 +279,8 @@ class Application:
 
             ligne = donnees_client.copy()
             ligne["prediction"] = prediction
-            ligne["probabilite"] = probabilite
+            ligne["probabilite_no"] = probabilite_no
+            ligne["probabilite_yes"] = probabilite_yes
 
             ecrivain.writerow(ligne)
 

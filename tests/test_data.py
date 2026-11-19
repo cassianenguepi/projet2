@@ -98,7 +98,13 @@ def test_variable_categorielle_valeur_inconnue():
     with pytest.raises(DonneeInvalideError):
         var.valider("astronaute")
 
+def test_variable_categorielle_saisie_vide():
+    """Une saisie vide lève DonneeInvalideError."""
+    var = VariableCategorielle("job", ["admin.", "retired"])
 
+    with pytest.raises(DonneeInvalideError):
+        var.valider("")
+        
 # ---------- JeuDeDonnees ----------
 
 def test_jeu_de_donnees_construit_les_variables(petit_df):
