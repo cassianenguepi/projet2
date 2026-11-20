@@ -11,6 +11,8 @@ Divise le jeu de données en 2 ensembles: 80 % pour entraîner le modèle et 20 
 1.2. creer_reference():
 Crée un modèle de référence qui prédit toujours la catégorie majoritaire. Ce modèle sert à comparer les performances de notre arbre de décision (modèle de prédiction)
 
+L'arbre de décision permet de réaliser une classification (apprentissage automatique) à partir des données du fichier. Il apprends des règles à partir des caractéristiques des clients pour ensuite attribuer yes ou no à un  nouveau client. 
+
 1.3. entrainer_modele():
 Utilise ColumnTransformer pour sélectionner les colonnes catégorielles et OneHotEncoder pour transformer ces colonnes en variables numériques. Un Pipeline regroupe le prétraitement (colonnes catégorielles transformées) et l'arbre de décision. 
 
@@ -19,6 +21,7 @@ Calcule l'exactitude du modèle de référence et la compare à celle du modèle
 
 1.5. sauvegarder_modele(), sauvegarder_metadonnees() et charger_modele(), chager_metadonnees():
 Modèle entraîné sauvegardé dans un fichier pkl. avec Joblib et les métadonées sont sauvegardées dans un fichier JSON. 
+Un fichier pickle permettera de conserver le modele entrainer et de le reutiliser sans devoir recommencer l'entrainement à chauque lancement.
 
 1.6. predire():
 Cette fonction reçoit les caractéristiques d'un nouveau client et renvoi la catégotie ptédite ainsi que la précision de prédiction du yes et no. 
