@@ -104,13 +104,18 @@ class VariableCategorielle(Variable):
     @property
     def valeurs(self) -> list[str]:
         """Renvoie les valeurs permises pour cette variable."""
-        return self._valeurs
+        return self._valeurs.copy()
 
     def valider(self, saisie: str) -> str:
         """Vérifie que la saisie fait partie des valeurs permises.
 
-        Échoue : DonneeInvalideError si la valeur n'est pas dans la liste.
+        Échoue : DonneeInvalideError si la valeur n'est pas dans la liste ou si la saisie est vide.
         """
+        saisie = saisie.strip()
+
+        if saisie == "":
+            raise DonneeInvalideError(f"{self._nom} : champ vide.")
+        
         if saisie not in self._valeurs:
             raise DonneeInvalideError(
                 f"{self._nom} : choisissez une valeur de la liste."

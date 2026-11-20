@@ -30,7 +30,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, classification_report
 
 def separer_donnees(X, y):
     """
@@ -85,8 +85,10 @@ def entrainer_modele(X_train, y_train):
     preprocesseur = ColumnTransformer(transformers=[("categoriel", OneHotEncoder(handle_unknown="ignore"), colonnes_categorielles)], remainder="passthrough")
     modele = Pipeline([
     ("preprocesseur", preprocesseur),
-    ("classificateur", DecisionTreeClassifier(random_state=42))
+    ("classificateur", DecisionTreeClassifier(random_state=42, class_weight="balanced", max_depth=10, min_samples_leaf=10)) 
 ])
+    # class_weight permet de moins favoriser le no durant les prédictions
+    # max_depth = profondeur de l'arbre, min_samples_leaf = au moins 10 observations
     modele.fit(X_train, y_train) # entrainement avec les données
     return modele
 
@@ -97,12 +99,16 @@ def evaluer_modele(modele, reference, X_test, y_test):
     # Évaluation du modele principal
     y_pred = modele.predict(X_test) # y prédit à partir de données de clients jamais rencontrés lors de l'entrainement
     exactitude = accuracy_score(y_test, y_pred) # comparaison et calcul taux d'exactitude (accuracy)
+   
    # Évaluation du modèle de référence
     y_pred_reference = reference.predict(X_test)
     exactitude_reference = accuracy_score(y_test, y_pred_reference)
+   
     # Vérification avec Numpy
     exactitude_numpy = np.mean(np.array(y_test) == np.array(y_pred)) # comparaison donne des booléens (True = 1, False = 0) et fait leur moyenne
-
+   
+    # Affichage des autres mesures de performance
+    print(classification_report(y_test, y_pred))
     return exactitude, exactitude_reference, exactitude_numpy
 
 def sauvegarder_modele(modele, chemin):
@@ -157,9 +163,10 @@ def predire(modele, nouvelles_donnees):
     prediction = modele.predict(nouvelles_donnees)[0] # modele entrainé utilise les caractéristique du nouveau client pour faire une prédiction, [0] retire liste
     probabilites = modele.predict_proba(nouvelles_donnees)[0]
     classes = modele.classes_ # associé au yes, no --> liste triée ne ordre alphabétique ["no", "yes"]
-    indice = list(classes).index(prediction) # récupérer la prédictiom
-    probabilite = probabilites[indice]
-    return prediction, probabilite # retourn yes or no et probabilite associée à la catégorie prédite
+    # Récupère probabilité de chaque catégorie
+    probabilite_no = probabilites[list(classes).index("no")]
+    probabilite_yes = probabilites[list(classes).index("yes")]
+    return prediction, probabilite_no, probabilite_yes 
 
 def preparer_modele():
     """Entraîne, évalue et sauvegarde le modèle."""

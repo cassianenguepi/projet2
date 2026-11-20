@@ -8,8 +8,3 @@ Contenu
 """
 class DonneeInvalideError(Exception):
     pass
-# from src.exceptions import DonneeInvalideError("Test")
-# try:
-#     raise DonneeInvalideError("Test")
-# except DonneeInvalideError as e:
-#     print(e) # apparament il ne fait pas garder ceci

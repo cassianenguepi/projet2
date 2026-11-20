@@ -13,7 +13,8 @@ import pandas as pd
 import pytest
 
 from src.donnees import nettoyer, separer_caracteristiques_cible
-from src.model import (    separer_donnees,
+from src.model import (    
+    separer_donnees,
     creer_reference,
     entrainer_modele,
     evaluer_modele,
@@ -164,16 +165,36 @@ def test_charger_metadonnees_fichier_absent(tmp_path):
 
 
 def test_predire(donnees):
-    """Vérifie la prédiction et la probabilité associée."""
+    """Vérifie la prédiction et les probabilités associées."""
     X, y = donnees
     X_train, X_test, y_train, y_test = separer_donnees(X, y)
 
     modele = entrainer_modele(X_train, y_train)
 
-    prediction, probabilite = predire(modele, X_test.iloc[[0]])
-
+    prediction, probabilite_no, probabilite_yes = predire(
+        modele,
+        X_test.iloc[[0]]
+    )
     assert prediction in ["yes", "no"]
-    assert 0 <= probabilite <= 1
+    assert 0 <= probabilite_no <= 1
+    assert 0 <= probabilite_yes <= 1
+    assert np.isclose(probabilite_no + probabilite_yes, 1.0)
 
 
-    # pour tester et vérifier le fonctionnement du modèle avec le petit jeu de donnée : python3 -m pytest -v
+
+#1: TESTER ET VÉRIFIER FONCTIONNEMENT MODELE AVEC JEU DE DONNÉES : python3 -m pytest -v
+#2: ENTRAINER AVEC FICHIER CSV ET CRÉER FICHIERS DANS MODELS (metadonnees,json et modele.pkl): 
+        # python3 -c "from src.model import preparer_modele; print(preparer_modele())"
+#3: VÉRIFICATION QUE MODELE EST CRÉÉ : ls -lh models
+#4: VÉRIFICATION DES MÉTADONNÉES (NOM, EXACTITUDE, COLONNES): cat models/metadonnees.json
+#5: VÉRIFICATION DU PIPELINE ET DES CATÉGORIES:
+        # python3 -c "from src.model import charger_modele; m = charger_modele('models/modele.pkl'); print(type(m)); print(m.classes_)"
+
+# PROBLÈME AVEC PRÉDICTION (TJRS MÊME)
+#6: RENTRAINER ET VÉRIFIER L'ÉFFICACITÉ DU MODÈLE COMPARÉ AU MODELE DE REFERENCE: 
+        # python3 -c "from src.model import preparer_modele; print(preparer_modele())" 
+            # L'exactitude du modele de référence était pluS élevée que celle du modele
+#7: MODIF: entrainer_modele (class_weight) --> REFAIRE #6 
+        # La prédiction s'est améliorée, mais toujours plus basse
+#8: MODIF: entrainer_modele (max, min) --> REFAIRE #6
+        # La prédiction s'est améliorée, mais toujours plus basse
