@@ -1,0 +1,25 @@
+{
+    "nom_modele": "Arbre de d\u00e9cision",
+    "exactitude": 0.8389995143273433,
+    "colonnes": [
+        "age",
+        "job",
+        "marital",
+        "education",
+        "default",
+        "housing",
+        "loan",
+        "contact",
+        "month",
+        "day_of_week",
+        "campaign",
+        "previous",
+        "poutcome",
+        "emp.var.rate",
+        "cons.price.idx",
+        "cons.conf.idx",
+        "euribor3m",
+        "nr.employed",
+        "deja_contacte"
+    ]
+}

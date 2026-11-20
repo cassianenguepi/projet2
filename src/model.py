@@ -112,8 +112,8 @@ def sauvegarder_modele(modele, chemin):
         chemin : emplacement du fichier de sauvegarde
     """
     dossier = os.path.dirname(chemin)
-    if dossier and not os.path.exists(dossier):
-        raise FileNotFoundError("Le dossier de destination n'existe pas.")
+    if dossier:
+       os.makedirs(dossier, exist_ok=True)
     joblib.dump(modele, chemin) # sauvegarde le modele entrainé (apprentissage)
 
 def charger_modele(chemin):
@@ -126,9 +126,8 @@ def charger_modele(chemin):
 def sauvegarder_metadonnees(chemin, exactitude, colonnes):
     """ Sauvegarde les métadonnées du modele dans un fichier JSON """
     dossier = os.path.dirname(chemin)
-    if dossier and not os.path.exists(dossier):
-        raise FileNotFoundError("Le dossier de destination n'existe pas.")
-
+    if dossier:
+        os.makedirs(dossier, exist_ok=True)
     metadonnees = {
         "nom_modele": "Arbre de décision",
         "exactitude" : exactitude, 

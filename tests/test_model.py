@@ -174,3 +174,6 @@ def test_predire(donnees):
 
     assert prediction in ["yes", "no"]
     assert 0 <= probabilite <= 1
+
+
+    # pour tester et vérifier le fonctionnement du modèle avec le petit jeu de donnée : python3 -m pytest -v
