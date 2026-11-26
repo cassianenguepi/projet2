@@ -77,7 +77,8 @@ Crée un fichier csv contenant l'historique des prédictions (caractéristiques,
 3.4. creer_graphique():
 Crée le grapihique Matplotlib intégré à l'interface pour représenter les résultats des prédictions.
 
-3.5. mettre_a_jour_grahique(): actualise le graphique quand de nouvelles prédictions sont effectuées. 
+3.5. mettre_a_jour_grahique(): 
+Actualise le graphique quand de nouvelles prédictions sont effectuées. 
 
 3.6. lancer():
 Démarre la boucle principale de Tkinter (mainloop()) pour que l,utilisateur intéragisse avec l'interface.
