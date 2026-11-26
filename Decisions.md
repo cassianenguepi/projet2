@@ -1,6 +1,20 @@
 <!-- Fiche de décisions : une ligne par choix important, remplie au fil du projet.
 Colonnes : Choix | Options envisagées | Choix retenu et justification | Validé par l'auxiliaire (date) -->
 
+<<<<<<< HEAD
+charger_donnees : permet d'ouvrir le fichier csv avec leseparateur ";"
+nettoyer() prépare les données pour le modèle 
+
+Variable : la classe parente (le nom de la variable),
+VariableNumerique : vérifie qu’une saisie est un nombre dans l’intervalle permis,
+VariableCategorielle : vérifie que la saisie fait partie de la liste des valeurs permises,
+JeuDeDonnees : contient le tableau et la liste de ces variables.
+charger_donnees	un CSV avec ; est bien lu en colonnes, et un fichier introuvable lève FileNotFoundError
+nettoyer	le doublon, duration et pdays disparaissent, et deja_contacte vaut 0 ou 1 comme prévu
+VariableNumerique	"40" est accepté, les bornes 17 et 98 aussi, et une saisie vide, abc ou hors intervalle lève DonneeInvalideError
+VariableCategorielle	une valeur de la liste est acceptée, une valeur inconnue est refusée
+JeuDeDonnees	une variable du bon type est créée par colonne, sans la cible y
+=======
 1. Entrainement et utilisation du modele: Model.py
 Ce fichier contient les fonctions qui créent, entraînent, évaluent, sauvegardent et utilisent le modèle de prédiction. 
 Le projet utilise un arbre de décision (DecisionTreeClassifier) provenant de la bibliothèque scikit-learn pour prédire si un client est susceptible de souscrire à un produit bancaire (yes ou no).
@@ -83,3 +97,4 @@ Actualise le graphique quand de nouvelles prédictions sont effectuées.
 3.6. lancer():
 Démarre la boucle principale de Tkinter (mainloop()) pour que l,utilisateur intéragisse avec l'interface.
 
+>>>>>>> cfceb63f9fdb3ea46576b59cf0b3dd48ac257013

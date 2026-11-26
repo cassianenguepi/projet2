@@ -71,7 +71,22 @@ def main() -> None:
         )
 
 if __name__ == "__main__":
+<<<<<<< HEAD
+<<<<<<< HEAD
+    main()
+
+from src.interface import Application
+
+if __name__ == "__main__":
+    application = Application()
+    application.lancer()
+
+=======
+    main()
+>>>>>>> 331c7f243f20c1eb9118efcff95723e4e474a419
+=======
     main()
 
 
 # Pour lancer l'interface: python3 -m src.main
+>>>>>>> cfceb63f9fdb3ea46576b59cf0b3dd48ac257013
